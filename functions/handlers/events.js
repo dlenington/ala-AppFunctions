@@ -24,7 +24,7 @@ exports.getAllEvents = (req, res) => {
 
 exports.getEvent = (req, res) => {
   let eventData = {};
-  db.doc(`/events/${req.params.postId}`)
+  db.doc(`/events/${req.params.eventId}`)
     .get()
     .then(doc => {
       if (!doc.exists) {
