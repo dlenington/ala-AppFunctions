@@ -1,8 +1,8 @@
 const { db } = require("../util/admin");
 
-exports.getAllEvents = (req, res) => {
+exports.getEvents = (req, res) => {
   db.collection("events")
-    // .orderBy("section", "asc")
+    .where("day", "==", req.params.day)
     .get()
     .then(data => {
       let events = [];
