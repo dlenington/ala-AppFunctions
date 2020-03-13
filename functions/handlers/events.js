@@ -52,29 +52,17 @@ exports.getEvent = (req, res) => {
     });
 };
 
-exports.getDetails = (req, res) => {
+exports.getPanelData = (req, res) => {
   let panelData = {};
-  db.doc(`/panel/${req.params.panelId}`)
+  db.collection("panelists")
+    .where("panelId", "==", req.params.panelId)
     .get()
-    .then(doc => {
-      if (!doc.exists) {
-        return res.status(404).json({
-          error: "Event not found"
-        });
-      }
-      eventData = doc.data();
-      eventData.eventId = doc.id;
-      return db
-        .collection("panels")
-        .where("eventId", "==", req.params.eventId)
-        .get();
-    })
     .then(data => {
-      eventData.panels = [];
+      panelData.panelists = [];
       data.forEach(doc => {
-        eventData.panels.push(doc.data());
+        panelData.panelists.push(doc.data());
       });
-      return res.json(eventData);
+      return res.json(panelData);
     })
     .catch(err => {
       console.error(err);
