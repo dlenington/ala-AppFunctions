@@ -55,6 +55,7 @@ exports.getEvent = (req, res) => {
 exports.getPanelData = (req, res) => {
   let panelData = {};
   db.collection("panelists")
+    .orderBy("order")
     .where("panelId", "==", req.params.panelId)
     .get()
     .then(data => {
