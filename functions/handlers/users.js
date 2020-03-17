@@ -1,4 +1,10 @@
 const { db } = require("../util/admin");
+const config = require("../util/config");
+
+const firebase = require("firebase");
+firebase.initializeApp(config);
+
+const { validateSignupData } = require("../util/validators");
 
 exports.signup = (req, res) => {
   const newUser = {
@@ -11,8 +17,6 @@ exports.signup = (req, res) => {
   const { valid, errors } = validateSignupData(newUser);
 
   if (!valid) return res.status(400).json(errors);
-
-  const noImg = "no-image.png";
 
   let token, userId;
   db.doc(`/users/${newUser.handle}`)
@@ -45,6 +49,8 @@ exports.signup = (req, res) => {
     })
     .catch(err => {
       console.error(err);
-      return res.status(500).json({ general: "Something went wrong" });
+      return res
+        .status(500)
+        .json({ general: "Something went wrong please try again" });
     });
 };
