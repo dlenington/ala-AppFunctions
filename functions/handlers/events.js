@@ -4,19 +4,19 @@ exports.getEvents = (req, res) => {
   db.collection("events")
     .where("day", "==", req.params.day)
     .get()
-    .then(data => {
+    .then((data) => {
       let events = [];
-      data.forEach(doc => {
+      data.forEach((doc) => {
         events.push({
           eventId: doc.id,
           dayId: doc.data().dayId,
           title: doc.data().title,
-          time: doc.data().time
+          time: doc.data().time,
         });
       });
       return res.json(events);
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
       res.status(500).json({ error: err.code });
     });
@@ -26,10 +26,10 @@ exports.getEvent = (req, res) => {
   let eventData = {};
   db.doc(`/events/${req.params.eventId}`)
     .get()
-    .then(doc => {
+    .then((doc) => {
       if (!doc.exists) {
         return res.status(404).json({
-          error: "Event not found"
+          error: "Event not found",
         });
       }
       eventData = doc.data();
@@ -39,14 +39,15 @@ exports.getEvent = (req, res) => {
         .where("eventId", "==", req.params.eventId)
         .get();
     })
-    .then(data => {
+    .then((data) => {
       eventData.panels = [];
-      data.forEach(doc => {
+      console.log(data);
+      data.forEach((doc) => {
         eventData.panels.push(doc.data());
       });
       return res.json(eventData);
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err);
       res.status(500).json({ error: err.code });
     });
@@ -58,15 +59,23 @@ exports.getPanelData = (req, res) => {
     .orderBy("order")
     .where("panelId", "==", req.params.panelId)
     .get()
-    .then(data => {
+    .then((data) => {
       panelData.panelists = [];
-      data.forEach(doc => {
+      data.forEach((doc) => {
         panelData.panelists.push(doc.data());
       });
       return res.json(panelData);
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err);
       res.status(500).json({ error: err.code });
     });
+};
+
+exports.likeEvent = (req, res) => {
+  const likeDocument = db
+    .collection("likes")
+    .where("userHandle", "==", req.user.handle)
+    .where("eventId", "==", req.params.eventId)
+    .limit(1);
 };
