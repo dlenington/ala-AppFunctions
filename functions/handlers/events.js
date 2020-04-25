@@ -78,4 +78,12 @@ exports.likeEvent = (req, res) => {
     .where("userHandle", "==", req.user.handle)
     .where("eventId", "==", req.params.eventId)
     .limit(1);
+
+  likeDocument.get().then((data) => {
+    if (data.empty) {
+      return db
+        .collection("likes")
+        .add({ eventId: req.params.eventId, userHandle: req.user.handle });
+    }
+  });
 };
