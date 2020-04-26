@@ -94,4 +94,12 @@ exports.unlikeEvent = (req, res) => {
     .where("userHandle", "==", req.user.handle)
     .where("eventId", "==", req.params.eventId)
     .limit(1);
+
+  likeDocument.get().then((data) => {
+    if (data.empty) {
+      return res.status(400).json({ error: "Event not liked" });
+    } else {
+      return db.doc(`/likes/${data.docs[0].id}`).delete();
+    }
+  });
 };
