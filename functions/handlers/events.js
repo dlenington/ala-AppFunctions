@@ -87,3 +87,11 @@ exports.likeEvent = (req, res) => {
     }
   });
 };
+
+exports.unlikeEvent = (req, res) => {
+  const likeDocument = db
+    .collection("likes")
+    .where("userHandle", "==", req.user.handle)
+    .where("eventId", "==", req.params.eventId)
+    .limit(1);
+};
