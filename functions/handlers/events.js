@@ -76,14 +76,14 @@ exports.likeEvent = (req, res) => {
   const likeDocument = db
     .collection("likes")
     .where("userHandle", "==", req.user.handle)
-    .where("eventId", "==", req.params.eventId)
+    .where("panelId", "==", req.params.panelId)
     .limit(1);
 
   likeDocument.get().then((data) => {
     if (data.empty) {
       return db
         .collection("likes")
-        .add({ eventId: req.params.eventId, userHandle: req.user.handle });
+        .add({ panelId: req.params.panelId, userHandle: req.user.handle });
     }
   });
 };
