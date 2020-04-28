@@ -73,6 +73,7 @@ exports.getPanelData = (req, res) => {
 };
 
 exports.likeEvent = (req, res) => {
+  console.log(req.user);
   const likeDocument = db
     .collection("likes")
     .where("userHandle", "==", req.user.handle)
