@@ -73,7 +73,6 @@ exports.getPanelData = (req, res) => {
 };
 
 exports.likeEvent = (req, res) => {
-  console.log(req.user);
   const likeDocument = db
     .collection("likes")
     .where("userHandle", "==", req.user.handle)
@@ -84,7 +83,12 @@ exports.likeEvent = (req, res) => {
     if (data.empty) {
       return db
         .collection("likes")
-        .add({ panelId: req.params.panelId, userHandle: req.user.handle });
+        .add({ panelId: req.params.panelId, userHandle: req.user.handle })
+        .then(() => {
+          return res.json({ message: "Event successfully liked" });
+        });
+    } else {
+      return res.status(400).json({ error: "Post already liked" });
     }
   });
 };
@@ -93,7 +97,7 @@ exports.unlikeEvent = (req, res) => {
   const likeDocument = db
     .collection("likes")
     .where("userHandle", "==", req.user.handle)
-    .where("eventId", "==", req.params.eventId)
+    .where("panelId", "==", req.params.panelId)
     .limit(1);
 
   likeDocument.get().then((data) => {
