@@ -79,18 +79,24 @@ exports.likeEvent = (req, res) => {
     .where("panelId", "==", req.params.panelId)
     .limit(1);
 
-  likeDocument.get().then((data) => {
-    if (data.empty) {
-      return db
-        .collection("likes")
-        .add({ panelId: req.params.panelId, userHandle: req.user.handle })
-        .then(() => {
-          return res.json({ message: "Event successfully liked" });
-        });
-    } else {
-      return res.status(400).json({ error: "Post already liked" });
-    }
-  });
+  likeDocument
+    .get()
+    .then((data) => {
+      if (data.empty) {
+        return db
+          .collection("likes")
+          .add({ panelId: req.params.panelId, userHandle: req.user.handle })
+          .then(() => {
+            return res.json({ message: "Event successfully liked" });
+          });
+      } else {
+        return res.status(400).json({ error: "Post already liked" });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: err.code });
+    });
 };
 
 exports.unlikeEvent = (req, res) => {
