@@ -100,11 +100,22 @@ exports.unlikeEvent = (req, res) => {
     .where("panelId", "==", req.params.panelId)
     .limit(1);
 
-  likeDocument.get().then((data) => {
-    if (data.empty) {
-      return res.status(400).json({ error: "Event not liked" });
-    } else {
-      return db.doc(`/likes/${data.docs[0].id}`).delete();
-    }
-  });
+  likeDocument
+    .get()
+    .then((data) => {
+      if (data.empty) {
+        return res.status(400).json({ error: "Event not liked" });
+      } else {
+        return db
+          .doc(`/likes/${data.docs[0].id}`)
+          .delete()
+          .then(() => {
+            return res.json("Panel successfully unliked");
+          });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: err.code });
+    });
 };
