@@ -11,7 +11,7 @@ exports.signup = (req, res) => {
     email: req.body.email,
     password: req.body.password,
     confirmPassword: req.body.confirmPassword,
-    handle: req.body.handle
+    handle: req.body.handle,
   };
 
   const { valid, errors } = validateSignupData(newUser);
@@ -21,7 +21,7 @@ exports.signup = (req, res) => {
   let token, userId;
   db.doc(`/users/${newUser.handle}`)
     .get()
-    .then(doc => {
+    .then((doc) => {
       if (doc.exists) {
         return res.status(400).json({ handle: "This handle is already taken" });
       } else {
@@ -30,24 +30,24 @@ exports.signup = (req, res) => {
           .createUserWithEmailAndPassword(newUser.email, newUser.password);
       }
     })
-    .then(data => {
+    .then((data) => {
       userId = data.user.uid;
       return data.user.getIdToken();
     })
-    .then(idToken => {
+    .then((idToken) => {
       token = idToken;
       const userCredentials = {
         handle: newUser.handle,
         email: newUser.email,
         createdAt: new Date().toISOString(),
-        userId
+        userId,
       };
       return db.doc(`/users/${newUser.handle}`).set(userCredentials);
     })
     .then(() => {
       return res.status(201).json({ token });
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err);
       return res
         .status(500)
@@ -58,7 +58,7 @@ exports.signup = (req, res) => {
 exports.login = (req, res) => {
   const user = {
     email: req.body.email,
-    password: req.body.password
+    password: req.body.password,
   };
 
   const { valid, errors } = validateLoginData(user);
@@ -68,16 +68,32 @@ exports.login = (req, res) => {
   firebase
     .auth()
     .signInWithEmailAndPassword(user.email, user.password)
-    .then(data => {
+    .then((data) => {
       return data.user.getIdToken();
     })
-    .then(token => {
+    .then((token) => {
       return res.json({ token });
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err);
       return res
         .status(403)
         .json({ general: "Wrong credentials, please try again" });
+    });
+};
+
+exports.getAuthenticatedUser = (req, res) => {
+  let userData = {};
+  console.log(req);
+  db.doc(`/users/${req.user.handle}`)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        userData.credentials = doc.data();
+        return db
+          .collection("likes")
+          .where("userHandle", "==", req.user.handle)
+          .get();
+      }
     });
 };
