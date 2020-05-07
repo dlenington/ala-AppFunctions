@@ -95,5 +95,16 @@ exports.getAuthenticatedUser = (req, res) => {
           .where("userHandle", "==", req.user.handle)
           .get();
       }
+    })
+    .then((data) => {
+      userData.likes = [];
+      data.forEach((doc) => {
+        userData.likes.push(doc.data());
+      });
+      return res.json(userData);
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ error: err.code });
     });
 };
