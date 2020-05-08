@@ -10,7 +10,7 @@ const {
   likeEvent,
   unlikeEvent,
 } = require("./handlers/events");
-const { signup, login } = require("./handlers/users");
+const { signup, login, getAuthenticatedUser } = require("./handlers/users");
 
 app.get("/events/:day", getEvents);
 app.get("/event/:eventId", getEvent);
@@ -19,5 +19,6 @@ app.get("/panel/:panelId/like", FBAuth, likeEvent);
 app.get("/panel/:panelId/unlike", FBAuth, unlikeEvent);
 app.post("/signup", signup);
 app.post("/login", login);
+app.post("/user", FBAuth, getAuthenticatedUser);
 
 exports.api = functions.https.onRequest(app);
