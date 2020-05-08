@@ -19,6 +19,6 @@ app.get("/panel/:panelId/like", FBAuth, likeEvent);
 app.get("/panel/:panelId/unlike", FBAuth, unlikeEvent);
 app.post("/signup", signup);
 app.post("/login", login);
-app.post("/user", FBAuth, getAuthenticatedUser);
+app.get("/user", FBAuth, getAuthenticatedUser);
 
 exports.api = functions.https.onRequest(app);
