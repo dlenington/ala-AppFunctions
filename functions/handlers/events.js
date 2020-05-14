@@ -125,3 +125,17 @@ exports.unlikeEvent = (req, res) => {
       res.status(500).json({ error: err.code });
     });
 };
+
+exports.getLikes = (req, res) => {
+  let likesData = {};
+  db.collection("likes")
+    .where("userHandle", "==", req.user.handle)
+    .get()
+    .then((data) => {
+      likesData.likes = [];
+      data.forEach((doc) => {
+        likesData.likes.push(doc.data());
+      });
+      return res.json(likesData);
+    });
+};
