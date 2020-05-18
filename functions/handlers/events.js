@@ -83,11 +83,15 @@ exports.likeEvent = (req, res) => {
     .get()
     .then((data) => {
       if (data.empty) {
+        let newLikeDocument = {
+          panelId: req.params.panelId,
+          userHandle: req.user.handle,
+        };
         return db
           .collection("likes")
-          .add({ panelId: req.params.panelId, userHandle: req.user.handle })
+          .add(newLikeDocument)
           .then(() => {
-            return res.json({ message: "Event successfully liked" });
+            return res.json(newLikeDocument);
           });
       } else {
         return res.status(400).json({ error: "Post already liked" });
