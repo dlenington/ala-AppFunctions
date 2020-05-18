@@ -103,6 +103,7 @@ exports.likeEvent = (req, res) => {
     });
 };
 
+//Need to remove like document from database and also Redux store
 exports.unlikeEvent = (req, res) => {
   const likeDocument = db
     .collection("likes")
