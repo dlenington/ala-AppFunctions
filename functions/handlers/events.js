@@ -115,7 +115,7 @@ exports.unlikeEvent = (req, res) => {
     .get()
     .then((data) => {
       if (data.empty) {
-        return res.status(400).json({ error: "Event not liked" });
+        return res.status(400).json({ error: "Panel not liked" });
       } else {
         return db
           .doc(`/likes/${data.docs[0].id}`)
