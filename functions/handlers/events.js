@@ -117,11 +117,15 @@ exports.unlikeEvent = (req, res) => {
       if (data.empty) {
         return res.status(400).json({ error: "Panel not liked" });
       } else {
+        let unlikedDocument = {
+          panelId: req.params.panelId,
+          userHandle: req.user.handle,
+        };
         return db
           .doc(`/likes/${data.docs[0].id}`)
           .delete()
           .then(() => {
-            return res.json("Panel successfully unliked");
+            return res.json(unlikedDocument);
           });
       }
     })
